@@ -1,6 +1,11 @@
-# Mongo
-Para consultas de Mongo se utilizó ``Mongoose`` el cual es un ODM para Node.js
+# Detalles del proyecto
+Este proyecto es un servidor de backend desarrollado con Node.js y Express, que utiliza Mongoose como ODM para interactuar con una base de datos MongoDB. El proyecto cuenta con las siguientes características:
 
+* **Rutas:** El servidor cuenta con varias rutas definidas en el archivo src/router.ts, que permiten realizar operaciones CRUD (Crear, Leer, Actualizar y Eliminar) sobre los datos almacenados en la base de datos.
+
+* **Modelos:** El proyecto utiliza modelos Mongoose para definir la estructura de los datos almacenados en la base de datos. Los modelos se encuentran en la carpeta src/models.
+
+* **Controladores:** Los controladores se encargan de manejar las solicitudes y respuestas del servidor. Se encuentran en la carpeta src/controllers.
 ## Arranque del proyecto
 Instalacion de dependencias
 
