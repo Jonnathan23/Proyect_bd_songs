@@ -5,7 +5,7 @@ import { IAwards } from "./Awards.model";
 import { IMonthly_sales } from "./Monthly_sales.model";
 import { IPlaybacks } from "./Playbacks.model";
 
-export interface ISong {
+export interface ISong extends Document {
     son_name: string;
     son_release_date: string;
 

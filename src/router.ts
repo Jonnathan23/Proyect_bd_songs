@@ -1,10 +1,14 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
-import { awardExist, countryExist, genreExist, handleInputErrors, singerExist } from "./middleware";
+import { awardExist, countryExist, genreExist, handleInputErrors, monthly_salesExist, playbackExist, singerExist, song_genreExist, songExist } from "./middleware";
 import { CountriesController } from "./controllers/Countries.controller";
 import { GenresController } from "./controllers/Genres.controller";
 import { AwardsController } from "./controllers/Awards.controller";
 import { SingersController } from "./controllers/Singers.controller";
+import { Songs_genresController } from "./controllers/Songs_genres.controller";
+import { SongsController } from "./controllers/Songs.controller";
+import { PlaybacksController } from "./controllers/Playbacks.controller";
+import { Monthly_salesController } from "./controllers/Monthly_sales.controller";
 
 const router = Router();
 
@@ -115,7 +119,120 @@ router.delete('/awards/:award_id',
     AwardsController.deleteAward
 )
 
-//* |------------| | Songs | |------------|
+//* |------------| | Songs_genres | |------------|
 
+router.get('/song_genres', Songs_genresController.getSongs_genres);
+
+router.post('/song_genres',
+    body('son_gen_name').notEmpty().withMessage('Song genre name is required'),
+    handleInputErrors,
+    Songs_genresController.creteSong_genre
+)
+
+router.put('/song_genres/:song_genre_id',
+    param('song_genre_id').isMongoId().withMessage('Song genre id is not valid'),
+    body('son_gen_name').notEmpty().withMessage('Song genre name is required'),
+    song_genreExist,
+    handleInputErrors,
+    Songs_genresController.updateSong_genreById
+)
+
+router.delete('/song_genres/:song_genre_id',
+    param('song_genre_id').isMongoId().withMessage('Song genre id is not valid'),
+    song_genreExist,
+    handleInputErrors,
+    Songs_genresController.deleteSong_genre
+)
+
+//* |------------| | Songs | |------------|
+router.get('/songs', SongsController.getSongs);
+
+router.get('/songs/:song_id',
+    param('song_id').isMongoId().withMessage('Song id is not valid'),
+    songExist,
+    handleInputErrors,
+    SongsController.getSongById
+)
+
+//! Canciones por genero
+router.get('/songs/genre/:song_genre_id',
+    param('song_genre_id').isMongoId().withMessage('Song genre id is not valid'),
+    song_genreExist,
+    handleInputErrors,
+    SongsController.getSongsByGenre
+)
+
+//! Canciones por fecha
+router.get('/songs/release-date/:startDate/:endDate',
+    param("startDate")
+        .notEmpty().withMessage("Start date is required")
+        .isISO8601().withMessage("Start date is not valid"),
+    param("endDate")
+        .notEmpty().withMessage("End date is required")
+        .isISO8601().withMessage("End date is not valid"),
+    handleInputErrors,
+    SongsController.getSongReleaseDate
+)
+
+//! Canciones por cantante
+router.get('/songs/singer/:singer_id',
+    param('singer_id').isMongoId().withMessage('Singer id is not valid'),
+    singerExist,
+    handleInputErrors,
+    SongsController.getSongsBySinger
+)
+
+router.post('/songs/:singer_id/:song_genre_id',
+    param('singer_id').isMongoId().withMessage('Singer id is not valid'),
+    param('song_genre_id').isMongoId().withMessage('Song genre id is not valid'),
+
+    body('son_name').notEmpty().withMessage('Song name is required'),
+    body('son_release_date')
+        .notEmpty().withMessage('Release date is required')
+        .isISO8601().withMessage("End date is not valid"),
+    singerExist,
+    song_genreExist,
+    handleInputErrors,
+    SongsController.createSong
+)
+
+router.delete('/songs/:song_id',
+    param('song_id').isMongoId().withMessage('Song id is not valid'),
+    songExist,
+    handleInputErrors,
+    SongsController.deleteSong
+)
+
+//* |------------| | Playbacks | |------------|
+
+router.get('/playbacks', PlaybacksController.getPlaybacks);
+
+router.delete('/playbacks:/:playback_id',
+    param('playback_id').isMongoId().withMessage('Playback id is not valid'),
+    playbackExist,
+    handleInputErrors,
+    PlaybacksController.deletePlayback
+)
+
+//* |------------| | Monthly_sales | |------------|
+
+router.get('/monthly_sales', Monthly_salesController.getMonthly_sales);
+
+router.get('/monthly_sales/:monthly_sales_id',
+    param('monthly_sales_id').isMongoId().withMessage('Monthly sales id is not valid'),
+    monthly_salesExist,
+    handleInputErrors,
+    Monthly_salesController.getMonthly_salesById
+)
+
+
+router.post('/monthly_sales',
+    body('mont_date')
+        .notEmpty().withMessage('Monthly sales date is required')
+        .isISO8601().withMessage('Monthly sales date is not valid'),
+    songExist,
+    handleInputErrors,
+    Monthly_salesController.createMonthly_sales
+)
 
 export default router;

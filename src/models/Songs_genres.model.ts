@@ -6,7 +6,7 @@ export interface ISong_genres extends Document {
     son_gen_songs: PopulatedDoc<ISong & Document>[]
 }
 
-const Song_genresSchema: Schema = new Schema({
+const Songs_genresSchema: Schema = new Schema({
     son_gen_name: {
         type: String,
         required: true,
@@ -20,5 +20,5 @@ const Song_genresSchema: Schema = new Schema({
     ]
 }, { timestamps: false })
 
-const Song_genres = mongoose.model<ISong_genres>("Song_genres", Song_genresSchema);
-export default Song_genres
+const Songs_genres = mongoose.model<ISong_genres>("Song_genres", Songs_genresSchema);
+export default Songs_genres
