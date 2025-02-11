@@ -26,3 +26,7 @@ npm run dev:api
 ```
 
 Arranque para acceder a la api con Postman o Thunderc Client con MongoDB de forma local
+
+```bash
+npm run dev:api:local
+```
