@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import Songs from "../models/Songs.model"
 import { convertToObject } from "typescript"
+import Monthly_sales from "../models/Monthly_sales.model"
 
 export class SongsController {
 
@@ -46,7 +47,7 @@ export class SongsController {
      */
     static getSongReleaseDate = async (req: Request, res: Response) => {
         try {
-            const { startDate, endDate } = req.params;            
+            const { startDate, endDate } = req.params;
             const start = new Date(startDate);
             start.setHours(0, 0, 0, 0);
 
@@ -80,10 +81,53 @@ export class SongsController {
             const songs = await Songs.find({ son_singer: singer })
 
             res.status(200).json({ Canciones_por_artista: { artista: singer.sin_name, songs } })
-        } catch(error) {
+        } catch (error) {
             res.status(500).json({ errors: error })
         }
     }
+
+    static getSongByIncreasedCollection = async (req: Request, res: Response) => {
+        try {
+            // Obtener las canciones ordenadas por mayor recaudación
+            const increasedCollections = await Monthly_sales.find()
+                .sort({ mont_collected: -1 })
+                .limit(3)
+                .populate("mont_song", "son_name")
+                .select("-__v -mont_date");
+
+            if (increasedCollections.length === 0) {
+                res.status(200).json({ message: "No songs found with collection data", increasedCollections });
+                return
+            }
+
+            const songsDailts = increasedCollections.map((collection) => ({
+                song_id: collection.mont_song._id.toString(),
+                song_collection: collection.mont_collected,
+                song_unit_payment: collection.mont_unit_payment
+            }));
+
+            const songIds = songsDailts.map(song => song.song_id);
+            const songs = await Songs.find({ _id: { $in: songIds } })
+                .populate("son_singer", "sin_name") // Obtener el nombre del cantante
+                .select("-__v -son_month_sales -son_playbacks -son_awards");
+
+            const songsMap = new Map(songs.map(song => [song._id.toString(), song.toObject()]));
+
+            const mergedSongs = songsDailts.map(detail => ({
+                ...songsMap.get(detail.song_id), // Obtener el objeto `song` correcto
+                ...detail // Agregar detalles de recaudación
+            }));
+
+
+            res.status(200).json({ Canciones_con_mayor_recaudación: mergedSongs });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ errors: error.message });
+        }
+    };
+
+
 
     static updateSong = async (req: Request, res: Response) => {
         try {

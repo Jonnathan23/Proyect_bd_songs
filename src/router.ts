@@ -147,6 +147,9 @@ router.delete('/song_genres/:song_genre_id',
 //* |------------| | Songs | |------------|
 router.get('/songs', SongsController.getSongs);
 
+//! Canciones por popularidad
+router.get('/songs/increased-collection', SongsController.getSongByIncreasedCollection);
+
 router.get('/songs/:song_id',
     param('song_id').isMongoId().withMessage('Song id is not valid'),
     songExist,
@@ -169,6 +172,7 @@ router.get('/songs/release-date/:startDate/:endDate',
         .isISO8601().withMessage("Start date is not valid"),
     param("endDate")
         .notEmpty().withMessage("End date is required")
+
         .isISO8601().withMessage("End date is not valid"),
     handleInputErrors,
     SongsController.getSongReleaseDate
@@ -207,7 +211,15 @@ router.delete('/songs/:song_id',
 
 router.get('/playbacks', PlaybacksController.getPlaybacks);
 
-router.delete('/playbacks:/:playback_id',
+router.post('/playbacks/create/:song_id',
+    param('song_id').isMongoId().withMessage('Song id is not valid'),
+    body('play_timestamp').notEmpty().withMessage('Playback timestamp is required'),
+    songExist,
+    handleInputErrors,
+    PlaybacksController.createPlayback    
+)
+
+router.delete('/playbacks/:playback_id',
     param('playback_id').isMongoId().withMessage('Playback id is not valid'),
     playbackExist,
     handleInputErrors,
@@ -226,7 +238,16 @@ router.get('/monthly_sales/:monthly_sales_id',
 )
 
 
-router.post('/monthly_sales',
+router.post('/monthly_sales/:song_id',
+    body('mont_unit_payment')
+    .notEmpty().withMessage('Monthly sales unit payment is required')
+    .isNumeric().withMessage('Monthly sales unit payment is not valid')
+    .custom((value) => {
+        if (value < 0) {
+            throw new Error('Monthly sales unit payment must be greater than 0');
+        }
+        return true;
+    }),
     body('mont_date')
         .notEmpty().withMessage('Monthly sales date is required')
         .isISO8601().withMessage('Monthly sales date is not valid'),
