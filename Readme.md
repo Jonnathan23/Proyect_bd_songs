@@ -6,6 +6,7 @@ Este proyecto es un servidor de backend desarrollado con Node.js y Express, que 
 * **Modelos:** El proyecto utiliza modelos Mongoose para definir la estructura de los datos almacenados en la base de datos. Los modelos se encuentran en la carpeta src/models.
 
 * **Controladores:** Los controladores se encargan de manejar las solicitudes y respuestas del servidor. Se encuentran en la carpeta src/controllers.
+
 ## Arranque del proyecto
 Instalacion de dependencias
 
@@ -30,3 +31,11 @@ Arranque para acceder a la api con Postman o Thunderc Client con MongoDB de form
 ```bash
 npm run dev:api:local
 ```
+
+## Controlador principal para los ``Reportes``
+El controlador de canciones ``SongsController`` se encarga de manejar las solicitudes relacionadas con las canciones. Este controlador ofrece las siguientes funcionalidades:
+
+* *Obtener* canciones estrenadas en un periodo de tiempo: Esta función permite obtener las canciones que fueron estrenadas en un periodo de tiempo específico. La consulta se realiza utilizando el campo son_release_date de la base de datos.
+* *Obtener* canciones con mayor recaudación: Esta función permite obtener las canciones que tienen mayor recaudación. La consulta se realiza utilizando el campo son_month_sales de la base de datos.
+* *Obtener* canciones por artista: Esta función permite obtener las canciones de un artista específico. La consulta se realiza utilizando el campo son_singer de la base de datos.
+* *Obtener* canciones por género: Esta función permite obtener las canciones de un género específico. La consulta se realiza utilizando el campo son_genre de la base de datos.
