@@ -108,7 +108,8 @@ export class SongsController {
 
             const songIds = songsDailts.map(song => song.song_id);
             const songs = await Songs.find({ _id: { $in: songIds } })
-                .populate("son_singer", "sin_name") // Obtener el nombre del cantante
+                .populate("son_genre", "son_gen_name")
+                .populate("son_singer", "sin_name")
                 .select("-__v -son_month_sales -son_playbacks -son_awards");
 
             const songsMap = new Map(songs.map(song => [song._id.toString(), song.toObject()]));
