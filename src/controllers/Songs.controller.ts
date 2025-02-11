@@ -75,6 +75,11 @@ export class SongsController {
         }
     }
 
+    /**
+     * @description Get songs by singer
+     * @param req 
+     * @param res 
+     */
     static getSongsBySinger = async (req: Request, res: Response) => {
         try {
             const singer = req.singer
@@ -86,6 +91,12 @@ export class SongsController {
         }
     }
 
+    /**
+     * @description Get songs by increased collection
+     * @param req 
+     * @param res 
+     * @returns 
+     */
     static getSongByIncreasedCollection = async (req: Request, res: Response) => {
         try {
             // Obtener las canciones ordenadas por mayor recaudación
